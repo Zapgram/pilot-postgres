@@ -20,7 +20,11 @@ ARG PGVECTOR_VERSION
 RUN cd /tmp \
     && git clone --branch v${PGVECTOR_VERSION} https://github.com/pgvector/pgvector.git \
     && cd pgvector \
-    && make \
+    # Disable CPU-specific optimizations since the CPU we're building on might
+    # not be the same as what we're running in CI or development
+    #
+    # ref: https://github.com/pgvector/pgvector/issues/143
+    && make OPTFLAGS="" \
     && make install \
     && cd /tmp \
     && rm -rf /tmp/pgvector
